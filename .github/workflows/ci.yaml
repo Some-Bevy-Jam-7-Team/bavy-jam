@@ -57,7 +57,7 @@ jobs:
           save-if: ${{ github.ref == 'refs/heads/main' }}
           cache-directories: ${{ env.LD_LIBRARY_PATH }}
 
-      - &install-deps
+      - &install_deps
         name: Dependencies
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev
 
@@ -65,7 +65,7 @@ jobs:
         name: Cranelift
         run: rustup component add rustc-codegen-cranelift-preview --toolchain ${{ env.toolchain }}
 
-      - &config
+      - &cargo_config
         name: Cargo config
         run: mv .cargo/config_ci.toml .cargo/config.toml
 
@@ -85,7 +85,7 @@ jobs:
 
       - name: Doctests
         run: cargo test --locked --workspace --doc
-        # Failing until we have a `lib.rs` again
+        # Fails without `lib.rs`
         continue-on-error: true
 
   clippy:
@@ -98,7 +98,7 @@ jobs:
         uses: dtolnay/rust-toolchain@f7ccc83f9ed1e5b9c81d8a67d7ad1a747e22a561
         with:
           toolchain: ${{ env.toolchain }}
-          components: clippy
+          components: clippy, rustc-codegen-cranelift-preview
 
       - *ld_library_path
 
@@ -109,9 +109,9 @@ jobs:
           save-if: false
           cache-directories: ${{ env.LD_LIBRARY_PATH }}
 
-      - *install-deps
+      - *install_deps
       - *cranelift
-      - *config
+      - *cargo_config
       - *binstall
       - *wild
 
