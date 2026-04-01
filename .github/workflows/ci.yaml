@@ -24,6 +24,8 @@ env:
   CARGO_TERM_COLOR: always
   CARGO_INCREMENTAL: 0
   RUSTFLAGS: "-C debuginfo=0"
+  # Use the same Rust toolchain across jobs so they can share a cache.
+  toolchain: nightly-2026-03-02
 
 jobs:
   test:
