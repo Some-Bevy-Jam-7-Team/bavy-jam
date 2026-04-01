@@ -33,6 +33,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      - &checkout
+        name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@master
@@ -40,24 +43,19 @@ jobs:
           components: rustc-codegen-cranelift-preview
           toolchain: ${{ env.toolchain }}
 
-      - &checkout
-        name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
-
-      - name: Set LD_LIBRARY_PATH
+      - &ld_library_path
+        name: Set LD_LIBRARY_PATH
         id: ld_library_path
         run: |
           # Setting LD_LIBRARY_PATH is a workaround for <https://github.com/TheBevyFlock/bevy_new_2d/pull/318#issuecomment-2585935350>.
           echo "LD_LIBRARY_PATH=$(rustc --print target-libdir)" >> $GITHUB_ENV
 
-      - &cache
-        name: Rust Cache
+      - name: Rust Cache
         uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5
         with:
           shared-key: "ci"
           save-if: ${{ github.ref == 'refs/heads/main' }}
           cache-directories: ${{ env.LD_LIBRARY_PATH }}
-
 
       - &install-deps
         name: Install Dependencies
@@ -96,17 +94,25 @@ jobs:
     timeout-minutes: 30
     steps:
       - *checkout
-      - *cache
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5
+        with:
+          shared-key: "ci"
+          save-if: false
+          cache-directories: ${{ env.LD_LIBRARY_PATH }}
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@f7ccc83f9ed1e5b9c81d8a67d7ad1a747e22a561
         with:
           toolchain: ${{ env.toolchain }}
           components: clippy
+
+      - *ld_library_path
       - *install-deps
       - *cranelift
       - *config
       - *binstall
       - *wild
+
       - name: Run clippy
         run: cargo clippy -- -D warnings
 
@@ -116,11 +122,13 @@ jobs:
     timeout-minutes: 30
     steps:
       - *checkout
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@f7ccc83f9ed1e5b9c81d8a67d7ad1a747e22a561
         with:
           toolchain: ${{ env.toolchain }}
           components: rustfmt
+
       - name: Run cargo fmt
         run: cargo fmt --all -- --check
 
