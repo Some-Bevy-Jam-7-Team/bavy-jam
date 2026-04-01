@@ -54,7 +54,7 @@ jobs:
         uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5
         with:
           shared-key: "ci"
-          save-if: ${{ github.ref == 'refs/heads/main' }}
+          save-if: false
           cache-directories: ${{ env.LD_LIBRARY_PATH }}
 
       - &install_deps
@@ -106,7 +106,7 @@ jobs:
         uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5
         with:
           shared-key: "ci"
-          save-if: false
+          save-if: ${{ github.ref == 'refs/heads/main' }}
           cache-directories: ${{ env.LD_LIBRARY_PATH }}
 
       - *install_deps
