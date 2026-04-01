@@ -1,15 +1,19 @@
 use bevy::anti_alias::taa::TemporalAntiAliasing;
+use bevy::asset::AssetMetaCheck;
 use bevy::camera::Hdr;
+use bevy::core_pipeline::prepass::DeferredPrepass;
 use bevy::core_pipeline::tonemapping::Tonemapping;
+use bevy::gltf::GltfPlugin;
+use bevy::gltf::convert_coordinates::GltfConvertCoordinates;
 use bevy::input::mouse::AccumulatedMouseMotion;
 use bevy::light::atmosphere::ScatteringMedium;
 use bevy::light::{Atmosphere, AtmosphereEnvironmentMapLight, ShadowFilteringMethod};
-use bevy::pbr::ScreenSpaceAmbientOcclusion;
+use bevy::pbr::{DefaultOpaqueRendererMethod, ScreenSpaceAmbientOcclusion};
 use bevy::post_process::bloom::Bloom;
 use bevy::prelude::*;
 
 use bevy::render::view::ColorGrading;
-use bevy::window::{CursorGrabMode, CursorOptions};
+use bevy::window::{CursorGrabMode, CursorOptions, PresentMode};
 
 #[derive(States, Debug, Clone, PartialEq, Eq, Hash, Default)]
 enum AppState {
@@ -32,7 +36,38 @@ struct AppAssets {
 
 fn main() -> AppExit {
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins(
+            DefaultPlugins
+                .set(AssetPlugin {
+                    // Wasm builds will check for meta files (that don't exist) if this isn't set.
+                    // This causes errors and even panics on web build on itch.
+                    // See https://github.com/bevyengine/bevy_github_ci_template/issues/48.
+                    meta_check: AssetMetaCheck::Never,
+                    ..default()
+                })
+                .set(WindowPlugin {
+                    primary_window: Window {
+                        title: "Bavy jam".to_string(),
+                        fit_canvas_to_parent: true,
+                        present_mode: PresentMode::Mailbox,
+                        #[cfg(feature = "web")]
+                        prevent_default_event_handling: true,
+                        ..default()
+                    }
+                    .into(),
+                    ..default()
+                })
+                .set(ImagePlugin {
+                    default_sampler: default_image_sampler_descriptor(),
+                })
+                .set(GltfPlugin {
+                    convert_coordinates: GltfConvertCoordinates {
+                        rotate_scene_entity: true,
+                        rotate_meshes: true,
+                    },
+                    ..default()
+                }),
+        )
         .init_state::<AppState>()
         .configure_sets(
             Update,
@@ -161,8 +196,11 @@ pub fn setup_camera(
         Bloom::NATURAL,
         Tonemapping::TonyMcMapface,
         Transform::from_xyz(-30., 20., 30.).looking_at(Vec3::ZERO, Vec3::Y),
+        Msaa::Off,
+        TemporalAntiAliasing::default(),
         ShadowFilteringMethod::Temporal,
-        (Msaa::Off, TemporalAntiAliasing::default()),
+        DeferredPrepass,
+        #[cfg(not(target_family = "wasm"))]
         ScreenSpaceAmbientOcclusion::default(),
         AtmosphereEnvironmentMapLight {
             intensity: 0.4,
@@ -241,5 +279,15 @@ fn move_camera(
         let pitch = (pitch + delta_pitch).clamp(-PITCH_LIMIT, PITCH_LIMIT);
 
         transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);
+    }
+}
+
+pub fn default_image_sampler_descriptor() -> ImageSamplerDescriptor {
+    ImageSamplerDescriptor {
+        address_mode_u: ImageAddressMode::Repeat,
+        address_mode_v: ImageAddressMode::Repeat,
+        address_mode_w: ImageAddressMode::Repeat,
+        anisotropy_clamp: 16,
+        ..ImageSamplerDescriptor::linear()
     }
 }

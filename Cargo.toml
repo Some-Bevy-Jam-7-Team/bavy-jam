@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 
 bevy = { git = "https://github.com/bevyengine/bevy", branch = "main" }
+wasm-bindgen = { version = "=0.2.108", optional = true }
 
 # Set max log levels. This helps avoid unwanted low-severity log spam, which can affect performance.
 log = { version = "0.4", features = [
@@ -45,4 +46,9 @@ codegen-units = 1
 # Do a second optimization pass over the entire program, including dependencies.
 # Slows compile times, marginal improvements.
 lto = "thin"
+
+
+[features]
+web = ["bevy/webgpu", "dep:wasm-bindgen"]
+
 
