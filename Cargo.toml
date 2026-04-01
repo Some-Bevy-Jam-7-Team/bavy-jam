@@ -6,7 +6,6 @@ edition = "2024"
 [dependencies]
 
 bevy = { git = "https://github.com/bevyengine/bevy", branch = "main" }
-bevy_math = { git = "https://github.com/bevyengine/bevy", features = ["approx"] }
 
 # Set max log levels. This helps avoid unwanted low-severity log spam, which can affect performance.
 log = { version = "0.4", features = [
@@ -47,4 +46,3 @@ codegen-units = 1
 # Slows compile times, marginal improvements.
 lto = "thin"
 
- { git = "https://github.com/bevyengine/bevy", branch = "main" }
