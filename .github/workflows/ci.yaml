@@ -116,7 +116,7 @@ jobs:
       - *wild
 
       - name: Run clippy
-        run: cargo clippy -- -D warnings
+        run: cargo clippy --locked -- -D warnings
 
   format:
     name: Format
