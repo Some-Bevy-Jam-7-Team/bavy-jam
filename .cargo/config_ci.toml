@@ -1,0 +1,139 @@
+#[unstable]
+codegen-backend = true
+
+[profile.dev]
+codegen-backend = "llvm"
+# If you want to attach a debugger, set this to true
+debug = "line-tables-only"
+#debug = true
+
+# Consider compiling deps with cranelift if you want cold-compilation to be faster
+[profile.dev.package."*"]
+codegen-backend = "llvm"
+
+# cranelift is `panic = abort`, so you need to compile with llvm to get `#[should_panic]` working
+[profile.test.package."*"]
+codegen-backend = "llvm"
+
+# Disable cranelift for release profile
+[profile.release]
+codegen-backend = "llvm"
+
+# cranelift cannot build wasm32-unknown-unknown out of the box
+[profile.web]
+codegen-backend = "llvm"
+
+[build]
+target-dir = "C:/dev/cargo-target"
+
+[target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = [
+    "-Clink-arg=--ld-path=wild",
+    # Compile faster
+    "-Zshare-generics=y",
+    "-Zthreads=8",
+]
+rustdocflags = [
+    # Compile faster
+    "-Zshare-generics=y",
+    "-Zthreads=8",
+]
+
+[target.wasm32-unknown-unknown]
+rustflags = [
+    # Compile faster
+    "-Zshare-generics=y",
+    "-Zthreads=8",
+]
+rustdocflags = [
+    # Compile faster
+    "-Zshare-generics=y",
+    "-Zthreads=8",
+]
+
+[target.x86_64-pc-windows-msvc]
+# LLD linker
+#
+# You may need to install it:
+#
+# ```
+# cargo install -f cargo-binutils
+# rustup component add llvm-tools
+# ```
+linker = "rust-lld.exe"
+rustdocflags = ["-Clinker=rust-lld.exe"]
+rustflags = [
+    # Nightly
+    "-Zshare-generics=y",
+    "-Zthreads=8",
+] This config is used for the CI workflow.
+# Feel free to also use it locally for fast builds if you have the required setup!
+
+[unstable]
+codegen-backend = true
+
+[profile.dev]
+codegen-backend = "cranelift"
+
+# Consider using llvm for this setting if you use tests that `#[should_panic]`,
+# as cranelift only supports `panic = abort`.
+# Since Foxtrot does not use `#[should_panic]` so far, we can use cranelift for speed increases.
+[profile.dev.package."*"]
+codegen-backend = "cranelift"
+
+# Disable cranelift for release profile
+[profile.release]
+codegen-backend = "llvm"
+
+# cranelift cannot build wasm32-unknown-unknown out of the box
+[profile.web]
+codegen-backend = "llvm"
+
+[profile.web.package."*"]
+codegen-backend = "llvm"
+
+# Override the high opt-level from the dev profile for the test profile
+[profile.test.package."*"]
+opt-level = 1
+
+[target.wasm32-unknown-unknown]
+# Clang does not support wasm32-unknown-unknown,
+# so it's hard to use a better linker.
+# Note that Wasm already uses rust-lld by default.
+rustflags = [
+    "-Dwarnings",
+    "-Cdebuginfo=line-tables-only",
+    "--cfg",
+    "getrandom_backend=\"wasm_js\"",
+    # Nightly
+    "-Zshare-generics=y",
+    "-Zthreads=0",
+]
+rustdocflags = [
+    "-Dwarnings",
+    # Nightly
+    "-Zshare-generics=y",
+    "-Zthreads=0",
+]
+
+
+[target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = [
+    "-Dwarnings",
+    "-Cdebuginfo=line-tables-only",
+    # Faster linker
+    "-Clink-arg=--ld-path=wild",
+    # Nightly
+    "-Zshare-generics=y",
+    "-Zthreads=0",
+]
+rustdocflags = [
+    "-Dwarnings",
+    # Faster linker
+    "-Clink-arg=--ld-path=wild",
+    # Nightly
+    "-Zshare-generics=y",
+    "-Zthreads=0",
+]
