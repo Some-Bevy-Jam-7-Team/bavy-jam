@@ -62,7 +62,7 @@ fn setup(mut ns_app: ResMut<NextState<AppState>>) {
 
 fn load(mut cmd: Commands, asset_server: Res<AssetServer>) {
     cmd.insert_resource(AppAssets {
-        landscape: asset_server.load("level.glb#Scene0"),
+        landscape: asset_server.load("level.gltf#Scene0"),
     });
 }
 
@@ -175,9 +175,9 @@ pub fn setup_camera(
 fn setup_directional_light(mut cmd: Commands) {
     cmd.spawn((
         DirectionalLight {
-            // NOTE: Direct sunlight has over-exposure with the SkyBox ambient
-            // FULL_DAYLIGHT seems a bit low but 30_000. seems fine.
-            illuminance: 30_000.,
+            shadow_maps_enabled: true,
+            contact_shadows_enabled: true,
+            illuminance: 10_000.,
             color: Color::srgb(1.0, 0.98, 0.95),
             ..default()
         },
