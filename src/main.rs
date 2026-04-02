@@ -1,7 +1,6 @@
 use bevy::anti_alias::taa::TemporalAntiAliasing;
 use bevy::asset::AssetMetaCheck;
 use bevy::camera::Hdr;
-use bevy::core_pipeline::prepass::DeferredPrepass;
 use bevy::core_pipeline::tonemapping::Tonemapping;
 use bevy::gltf::GltfPlugin;
 use bevy::gltf::convert_coordinates::GltfConvertCoordinates;
@@ -9,7 +8,7 @@ use bevy::image::{ImageAddressMode, ImageSamplerDescriptor};
 use bevy::input::mouse::AccumulatedMouseMotion;
 use bevy::light::atmosphere::ScatteringMedium;
 use bevy::light::{Atmosphere, AtmosphereEnvironmentMapLight, ShadowFilteringMethod};
-use bevy::pbr::{DefaultOpaqueRendererMethod, ScreenSpaceAmbientOcclusion};
+use bevy::pbr::ScreenSpaceAmbientOcclusion;
 use bevy::post_process::bloom::Bloom;
 use bevy::prelude::*;
 
@@ -200,7 +199,7 @@ pub fn setup_camera(
         Msaa::Off,
         TemporalAntiAliasing::default(),
         ShadowFilteringMethod::Temporal,
-        DeferredPrepass,
+        ScreenSpaceAmbientOcclusion::default(),
         AtmosphereEnvironmentMapLight {
             intensity: 0.4,
             ..default()
