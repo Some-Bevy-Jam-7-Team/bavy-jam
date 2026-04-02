@@ -136,6 +136,7 @@ pub enum PhysLayer {
     Default,
     Goal,
     Player,
+    Boost,
 }
 
 /// Epic bevy impl uses box shadow on a mesh
