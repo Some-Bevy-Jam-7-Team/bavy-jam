@@ -201,8 +201,6 @@ pub fn setup_camera(
         TemporalAntiAliasing::default(),
         ShadowFilteringMethod::Temporal,
         DeferredPrepass,
-        #[cfg(not(target_family = "wasm"))]
-        ScreenSpaceAmbientOcclusion::default(),
         AtmosphereEnvironmentMapLight {
             intensity: 0.4,
             ..default()
