@@ -73,7 +73,11 @@ fn setup(
         .entity(ready.entity)
         .insert((
             // Add the character controller configuration. We'll use the default settings for now.
-            CharacterController { ..default() },
+            CharacterController {
+                speed: 16.0,
+                friction_hz: 20.0,
+                ..default()
+            },
             // The KCC currently behaves best when using a cylinder
             Collider::cylinder(0.3, 1.8),
             // Configure inputs. The actions `Movement`, `Jump`, etc. are provided by Ahoy, you just need to bind them.
