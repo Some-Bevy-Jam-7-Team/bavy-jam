@@ -52,14 +52,17 @@
 				"skein":[
 					{
 						"bastard::gameplay::npc::Npc":{}
+					},
+					{
+						"bevy_text::text::TextSpan":"ayyy"
 					}
 				]
 			},
 			"name":"Text 1.001",
 			"translation":[
 				0,
-				14,
-				-7
+				14.6875,
+				-15
 			]
 		},
 		{
@@ -91,14 +94,17 @@
 				"skein":[
 					{
 						"bastard::gameplay::npc::Npc":{}
+					},
+					{
+						"bevy_text::text::TextSpan":"ayyy"
 					}
 				]
 			},
 			"name":"Text 1",
 			"translation":[
 				0,
-				14,
-				-7
+				14.6875,
+				-15
 			]
 		}
 	],
@@ -108,9 +114,9 @@
 			"name":"Material.001",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.8000156879425049,
-					0.04217805340886116,
-					0.031326696276664734,
+					0.7723791599273682,
+					0.8000229597091675,
+					0.6626912355422974,
 					1
 				],
 				"metallicFactor":0,
@@ -185,7 +191,7 @@
 			"min":[
 				-13,
 				-2,
-				-16
+				-24.375
 			],
 			"type":"VEC3"
 		},
@@ -233,7 +239,7 @@
 			"min":[
 				-13,
 				-2,
-				-16
+				-24.375
 			],
 			"type":"VEC3"
 		},

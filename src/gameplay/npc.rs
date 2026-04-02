@@ -14,17 +14,11 @@ fn config(mut gizmo_config_store: ResMut<GizmoConfigStore>) {
     config.line.width = 4.;
 }
 
-fn spawn(mut gizmos: Gizmos, npcs: Query<(&Transform, &Name), With<Npc>>) {
-    for (transform, name) in &npcs {
-        let text = match name.as_str().split(".").next().unwrap_or(name.as_str()) {
-            "Text 1" => "memes",
-            _ => &format!(
-                "Fuck, this text ({name}) is mislabeled. Uuuuuh pretend this is some really good content, plz"
-            ),
-        };
+fn spawn(mut gizmos: Gizmos, npcs: Query<(&Transform, &TextSpan), With<Npc>>) {
+    for (transform, text) in &npcs {
         gizmos.text(
             dbg!(Isometry3d::new(transform.translation, transform.rotation)),
-            text,
+            text.as_str(),
             1.,
             Vec2::ZERO,
             tailwind::RED_800,
