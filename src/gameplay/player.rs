@@ -7,8 +7,9 @@ use bevy::{
     window::{CursorGrabMode, CursorOptions},
 };
 use bevy_ahoy::prelude::*;
-use bevy_enhanced_input::prelude::*;
+use bevy_enhanced_input::prelude::{Press, *};
 
+use crate::LevelReady;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_input_context::<PlayerInput>();
@@ -26,13 +27,17 @@ pub(super) fn plugin(app: &mut App) {
 pub(crate) struct Player;
 
 fn setup(
-    add: On<Add, Player>,
+    ready: On<LevelReady>,
+    player: Query<(), With<Player>>,
     mut commands: Commands,
     mut media: ResMut<Assets<ScatteringMedium>>,
 ) {
+    if !player.contains(ready.entity) {
+        return;
+    }
     // Spawn the player
     let player = commands
-        .entity(add.entity)
+        .entity(ready.entity)
         .insert((
             // Add the character controller configuration. We'll use the default settings for now.
             CharacterController::default(),
@@ -43,7 +48,6 @@ fn setup(
             actions!(PlayerInput[
                 (
                     Action::<Movement>::new(),
-                    // Normalize the input vector
                     DeadZone::default(),
                     Bindings::spawn((
                         Cardinal::wasd_keys(),
@@ -52,19 +56,57 @@ fn setup(
                 ),
                 (
                     Action::<Jump>::new(),
-                    bindings![KeyCode::Space,  GamepadButton::South],
+                    Press::default(),
+                    bindings![
+                        KeyCode::Space,
+                        GamepadButton::South,
+                        Binding::mouse_wheel(),
+                    ],
+                ),
+                (
+                    Action::<Tac>::new(),
+                    Press::default(),
+                    bindings![
+                        KeyCode::Space,
+                        GamepadButton::South,
+                        Binding::mouse_wheel(),
+                    ],
+                ),
+                (
+                    Action::<Crane>::new(),
+                    Press::default(),
+                    bindings![
+                        KeyCode::Space,
+                        GamepadButton::South,
+                        Binding::mouse_wheel(),
+                    ],
+                ),
+                (
+                    Action::<Mantle>::new(),
+                    Hold::new(0.2),
+                    bindings![
+                        KeyCode::Space,
+                        GamepadButton::South,
+                    ],
+                ),
+                (
+                    Action::<Climbdown>::new(),
+                    bindings![KeyCode::ControlLeft, GamepadButton::LeftTrigger2],
                 ),
                 (
                     Action::<Crouch>::new(),
                     bindings![KeyCode::ControlLeft, GamepadButton::LeftTrigger2],
                 ),
                 (
+                    Action::<SwimUp>::new(),
+                    bindings![KeyCode::Space, GamepadButton::South],
+                ),
+                (
                     Action::<RotateCamera>::new(),
+
                     Bindings::spawn((
-                        // tweak mouse and right stick sensitivity
-                        // in Scale::splat values
                         Spawn((Binding::mouse_motion(), Scale::splat(0.07))),
-                        Axial::right_stick().with((Scale::splat(4.0), DeadZone::default())),
+                        Axial::right_stick().with((Scale::splat(4.0),  DeadZone::default())),
                     ))
                 ),
             ]),

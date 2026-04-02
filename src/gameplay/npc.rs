@@ -11,13 +11,13 @@ pub(crate) struct Npc;
 fn config(mut gizmo_config_store: ResMut<GizmoConfigStore>) {
     let (config, _) = gizmo_config_store.config_mut::<DefaultGizmoConfigGroup>();
 
-    config.line.width = 4.;
+    config.line.width = 7.;
 }
 
 fn spawn(mut gizmos: Gizmos, npcs: Query<(&Transform, &TextSpan), With<Npc>>) {
     for (transform, text) in &npcs {
         gizmos.text(
-            dbg!(Isometry3d::new(transform.translation, transform.rotation)),
+            Isometry3d::new(transform.translation, transform.rotation),
             text.as_str(),
             1.,
             Vec2::ZERO,
