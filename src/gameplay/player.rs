@@ -27,7 +27,6 @@ pub(super) fn plugin(app: &mut App) {
 
 #[derive(Component, Reflect, Debug)]
 #[reflect(Component)]
-#[require(Sensor, CollidingEntities::default())]
 pub struct SpeedBoost;
 
 #[derive(Component)]
