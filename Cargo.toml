@@ -30,7 +30,6 @@ bevy = { git = "https://github.com/bevyengine/bevy", rev = "d06aa47744dfa378f2e8
   "wayland",
   "webgl2",
   "x11",
-  "dev",
 ] }
 bevy_ahoy = { git = "https://github.com/janhohenheim/bevy_ahoy", branch = "bevy-0.19" }
 bevy_enhanced_input = { git = "https://github.com/janhohenheim/bevy_enhanced_input", branch = "bevy-0.19" }
@@ -52,7 +51,7 @@ tracing = { version = "0.1", features = [
 rand = { version = "0.9" }
 
 [features]
-web = ["bevy/webgpu", "dep:wasm-bindgen"]
+web = ["bevy/webgpu", "dep:wasm-bindgen", "bevy_seedling/web_audio"]
 
 # Idiomatic Bevy code often triggers these lints, and the CI workflow treats them as errors.
 # In some cases they may still signal poor code quality however, so consider commenting out these lines.
