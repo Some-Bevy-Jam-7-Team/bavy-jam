@@ -12,14 +12,46 @@ use bevy_enhanced_input::prelude::{Press, *};
 use crate::{LevelReady, PhysLayer};
 
 pub(super) fn plugin(app: &mut App) {
+    app.register_type::<SpeedBoost>();
     app.add_input_context::<PlayerInput>();
     app.add_observer(setup).add_systems(
         Update,
         (
+            add_observers,
             capture_cursor.run_if(input_just_pressed(MouseButton::Left)),
             release_cursor.run_if(input_just_pressed(KeyCode::Escape)),
         ),
     );
+}
+
+#[derive(Component, Reflect, Debug)]
+#[reflect(Component)]
+pub struct SpeedBoost(pub f32);
+
+#[derive(Component)]
+pub struct SpeedBoostObserver;
+
+fn add_observers(
+    mut cmd: Commands,
+    q: Query<Entity, (With<SpeedBoost>, Without<SpeedBoostObserver>)>,
+) {
+    q.iter().for_each(|e| {
+        cmd.entity(e)
+            .insert(SpeedBoostObserver)
+            .observe(boost_collision);
+    });
+}
+
+fn boost_collision(trigger: On<CollisionEnd>, mut q_boosted: Query<&mut LinearVelocity>) {
+    let other_entity = trigger.event().body2;
+    let Some(mut boosted) = other_entity.and_then(|e| q_boosted.get_mut(e).ok()) else {
+        return;
+    };
+
+    let boost_value = 1.5;
+    boosted.0 *= Vec3::splat(boost_value).with_y(1.);
+
+    // mb some audio?
 }
 
 #[derive(Component, Reflect, Debug)]
