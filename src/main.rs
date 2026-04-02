@@ -1,9 +1,10 @@
 use bevy::asset::AssetMetaCheck;
+use bevy::ecs::error::error;
 use bevy::gltf::convert_coordinates::GltfConvertCoordinates;
 use bevy::gltf::{GltfLoaderSettings, GltfPlugin};
 use bevy::image::{ImageAddressMode, ImageSamplerDescriptor};
 use bevy::prelude::*;
-
+use bevy::scene::SceneInstanceReady;
 use bevy::window::PresentMode;
 
 mod gameplay;
@@ -30,6 +31,7 @@ struct AppAssets {
 
 fn main() -> AppExit {
     App::new()
+        .set_error_handler(error)
         .add_plugins(
             DefaultPlugins
                 .set(AssetPlugin {
@@ -71,7 +73,7 @@ fn main() -> AppExit {
                 AppSet::InGame.run_if(in_state(AppState::InGame)),
             ),
         )
-        .add_systems(Startup, setup_directional_light )
+        .add_systems(Startup, setup_directional_light)
         .add_systems(OnEnter(AppState::Setup), setup)
         .add_systems(OnEnter(AppState::Loading), (load, setup_loading_screen))
         .add_systems(OnEnter(AppState::InGame), spawn_landscape)
@@ -92,7 +94,7 @@ fn setup(mut ns_app: ResMut<NextState<AppState>>) {
 fn load(mut cmd: Commands, asset_server: Res<AssetServer>) {
     cmd.insert_resource(AppAssets {
         landscape: asset_server.load_with_settings(
-            "level.glb#Scene0",
+            "level.gltf#Scene0",
             |settings: &mut GltfLoaderSettings| {
                 settings.load_lights = true;
                 //settings.load_cameras = true;
@@ -120,7 +122,14 @@ fn main_loop() {
 pub struct Landscape;
 
 fn spawn_landscape(mut cmd: Commands, assets: Res<AppAssets>) {
-    cmd.spawn((Landscape, SceneRoot(assets.landscape.clone())));
+    cmd.spawn((Landscape, SceneRoot(assets.landscape.clone())))
+        .observe(
+            |ready: On<SceneInstanceReady>, children: Query<&Children>, mut commands: Commands| {
+                for child in children.iter_descendants(ready.entity) {
+                    commands.trigger(LevelReady { entity: child })
+                }
+            },
+        );
 }
 
 #[derive(Component)]
@@ -168,4 +177,9 @@ pub fn default_image_sampler_descriptor() -> ImageSamplerDescriptor {
         anisotropy_clamp: 16,
         ..ImageSamplerDescriptor::linear()
     }
+}
+
+#[derive(EntityEvent)]
+struct LevelReady {
+    entity: Entity,
 }
