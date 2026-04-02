@@ -32,6 +32,7 @@ fn graph(mut commands: Commands) {
 
     commands
         .spawn((MainBus, VolumeNode::default()))
+        .chain_node(LimiterNode::new(0.003, 0.15))
         .connect(AudioGraphOutput);
 
     // Pools
