@@ -1,19 +1,13 @@
-use bevy::anti_alias::taa::TemporalAntiAliasing;
 use bevy::asset::AssetMetaCheck;
-use bevy::camera::Hdr;
-use bevy::core_pipeline::tonemapping::Tonemapping;
-use bevy::gltf::GltfPlugin;
 use bevy::gltf::convert_coordinates::GltfConvertCoordinates;
+use bevy::gltf::{GltfLoaderSettings, GltfPlugin};
 use bevy::image::{ImageAddressMode, ImageSamplerDescriptor};
-use bevy::input::mouse::AccumulatedMouseMotion;
-use bevy::light::atmosphere::ScatteringMedium;
-use bevy::light::{Atmosphere, AtmosphereEnvironmentMapLight, ShadowFilteringMethod};
-use bevy::pbr::ScreenSpaceAmbientOcclusion;
-use bevy::post_process::bloom::Bloom;
 use bevy::prelude::*;
 
-use bevy::render::view::ColorGrading;
-use bevy::window::{CursorGrabMode, CursorOptions, PresentMode};
+use bevy::window::PresentMode;
+
+mod gameplay;
+mod third_party;
 
 #[derive(States, Debug, Clone, PartialEq, Eq, Hash, Default)]
 enum AppState {
@@ -62,12 +56,13 @@ fn main() -> AppExit {
                 })
                 .set(GltfPlugin {
                     convert_coordinates: GltfConvertCoordinates {
-                        rotate_scene_entity: true,
+                        rotate_scene_entity: false,
                         rotate_meshes: true,
                     },
                     ..default()
                 }),
         )
+        .add_plugins((third_party::plugin, gameplay::plugin))
         .init_state::<AppState>()
         .configure_sets(
             Update,
@@ -76,7 +71,7 @@ fn main() -> AppExit {
                 AppSet::InGame.run_if(in_state(AppState::InGame)),
             ),
         )
-        .add_systems(Startup, (setup_camera, setup_directional_light))
+        .add_systems(Startup, setup_directional_light )
         .add_systems(OnEnter(AppState::Setup), setup)
         .add_systems(OnEnter(AppState::Loading), (load, setup_loading_screen))
         .add_systems(OnEnter(AppState::InGame), spawn_landscape)
@@ -87,7 +82,6 @@ fn main() -> AppExit {
                 main_loop.in_set(AppSet::InGame),
             ),
         )
-        .add_systems(Update, (enable_cursor, disable_cursor, move_camera))
         .run()
 }
 
@@ -97,7 +91,13 @@ fn setup(mut ns_app: ResMut<NextState<AppState>>) {
 
 fn load(mut cmd: Commands, asset_server: Res<AssetServer>) {
     cmd.insert_resource(AppAssets {
-        landscape: asset_server.load("level.gltf#Scene0"),
+        landscape: asset_server.load_with_settings(
+            "level.glb#Scene0",
+            |settings: &mut GltfLoaderSettings| {
+                settings.load_lights = true;
+                //settings.load_cameras = true;
+            },
+        ),
     });
 }
 
@@ -142,72 +142,6 @@ fn setup_loading_screen(mut commands: Commands) {
     ));
 }
 
-fn disable_cursor(
-    btn: Res<ButtonInput<MouseButton>>,
-    mut q: Query<&mut CursorOptions, With<Window>>,
-    controller: Single<&mut Controller>,
-) {
-    if !btn.just_pressed(MouseButton::Left) {
-        return;
-    };
-
-    for mut options in &mut q {
-        options.grab_mode = CursorGrabMode::Locked;
-        options.visible = false;
-    }
-
-    let mut controller = controller.into_inner();
-    controller.enabled = true;
-}
-
-fn enable_cursor(
-    key: Res<ButtonInput<KeyCode>>,
-    mut q: Query<&mut CursorOptions, With<Window>>,
-    controller: Single<&mut Controller>,
-) {
-    if !key.just_pressed(KeyCode::Escape) {
-        return;
-    };
-
-    for mut options in &mut q {
-        options.grab_mode = CursorGrabMode::None;
-        options.visible = true;
-    }
-
-    let mut controller = controller.into_inner();
-    controller.enabled = false;
-}
-
-pub fn setup_camera(
-    mut cmd: Commands,
-    q_camera: Query<&Camera>,
-
-    mut media: ResMut<Assets<ScatteringMedium>>,
-) {
-    if !q_camera.is_empty() {
-        return;
-    };
-
-    cmd.spawn((
-        (Camera::default(), Camera3d::default()),
-        Controller::default(),
-        Hdr,
-        ColorGrading::default(),
-        Bloom::NATURAL,
-        Tonemapping::TonyMcMapface,
-        Transform::from_xyz(-30., 20., 30.).looking_at(Vec3::ZERO, Vec3::Y),
-        Msaa::Off,
-        TemporalAntiAliasing::default(),
-        ShadowFilteringMethod::Temporal,
-        ScreenSpaceAmbientOcclusion::default(),
-        AtmosphereEnvironmentMapLight {
-            intensity: 0.4,
-            ..default()
-        },
-        Atmosphere::earth(media.add(ScatteringMedium::default())),
-    ));
-}
-
 fn setup_directional_light(mut cmd: Commands) {
     cmd.spawn((
         DirectionalLight {
@@ -224,59 +158,6 @@ fn setup_directional_light(mut cmd: Commands) {
 #[derive(Component, Default)]
 pub struct Controller {
     pub enabled: bool,
-}
-
-fn move_camera(
-    time: Res<Time>,
-    keyboard_input: Res<ButtonInput<KeyCode>>,
-    single: Single<(&mut Transform, &Controller)>,
-    accumulated_mouse_motion: Res<AccumulatedMouseMotion>,
-) {
-    let (mut transform, controller) = single.into_inner();
-
-    if !controller.enabled {
-        return;
-    };
-
-    let amplify = keyboard_input.pressed(KeyCode::ShiftLeft);
-
-    let mut direction = Vec3::ZERO;
-
-    if keyboard_input.pressed(KeyCode::KeyW) {
-        direction += transform.forward().as_vec3();
-    }
-    if keyboard_input.pressed(KeyCode::KeyS) {
-        direction += transform.back().as_vec3();
-    }
-    if keyboard_input.pressed(KeyCode::KeyA) {
-        direction += transform.left().as_vec3();
-    }
-    if keyboard_input.pressed(KeyCode::KeyD) {
-        direction += transform.right().as_vec3();
-    }
-
-    if direction.length_squared() > 0.0 {
-        direction = direction.normalize();
-
-        let factor = if amplify { 40.0 } else { 10.0 };
-
-        transform.translation += direction * factor * time.delta_secs();
-    }
-
-    let delta = accumulated_mouse_motion.delta;
-
-    if delta != Vec2::ZERO {
-        let delta_yaw = -delta.x * 0.001;
-        let delta_pitch = -delta.y * 0.001;
-
-        let (yaw, pitch, roll) = transform.rotation.to_euler(EulerRot::YXZ);
-        let yaw = yaw + delta_yaw;
-
-        const PITCH_LIMIT: f32 = std::f32::consts::FRAC_PI_2 - 0.01;
-        let pitch = (pitch + delta_pitch).clamp(-PITCH_LIMIT, PITCH_LIMIT);
-
-        transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);
-    }
 }
 
 pub fn default_image_sampler_descriptor() -> ImageSamplerDescriptor {
