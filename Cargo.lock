@@ -959,6 +959,7 @@ dependencies = [
 [[package]]
 name = "bevy_heavy"
 version = "0.5.0-dev"
+source = "git+https://github.com/janhohenheim/bevy_heavy?branch=bevy-0.19#dc69b376919c8a18fe1b6ca0eb89ba2720436b60"
 dependencies = [
  "bevy_math",
  "bevy_reflect",
@@ -1175,7 +1176,7 @@ dependencies = [
  "arrayvec",
  "bevy_reflect",
  "derive_more",
- "glam",
+ "glam 0.32.1",
  "itertools 0.14.0",
  "libm",
  "rand",
@@ -1204,7 +1205,7 @@ dependencies = [
  "bytemuck",
  "derive_more",
  "encase",
- "glam",
+ "glam 0.32.1",
  "half",
  "hexasphere",
  "thiserror 2.0.18",
@@ -1349,7 +1350,7 @@ dependencies = [
  "downcast-rs 2.0.2",
  "erased-serde",
  "foldhash 0.2.0",
- "glam",
+ "glam 0.32.1",
  "indexmap",
  "inventory",
  "petgraph",
@@ -1435,7 +1436,7 @@ dependencies = [
  "derive_more",
  "downcast-rs 2.0.2",
  "encase",
- "glam",
+ "glam 0.32.1",
  "image",
  "indexmap",
  "itertools 0.14.0",
@@ -1716,6 +1717,7 @@ dependencies = [
 [[package]]
 name = "bevy_transform_interpolation"
 version = "0.5.0-dev"
+source = "git+https://github.com/janhohenheim/bevy_transform_interpolation?branch=bevy-0.19#7052b23b692bcd1ee5a32ea0474af2ce7c30a806"
 dependencies = [
  "bevy",
 ]
@@ -2903,6 +2905,15 @@ dependencies = [
 
 [[package]]
 name = "glam"
+version = "0.31.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "556f6b2ea90b8d15a74e0e7bb41671c9bdf38cd9f78c284d750b9ce58a2b5be7"
+dependencies = [
+ "bytemuck",
+]
+
+[[package]]
+name = "glam"
 version = "0.32.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f70749695b063ecbf6b62949ccccde2e733ec3ecbbd71d467dca4e5c6c97cca0"
@@ -2918,17 +2929,19 @@ dependencies = [
 [[package]]
 name = "glam_matrix_extras"
 version = "0.3.0-dev"
+source = "git+https://github.com/janhohenheim/glam_matrix_extras?branch=bevy-0.19#a8a0e42c961ec6252acdb26640d6e4910840da85"
 dependencies = [
  "bevy_reflect",
- "glam",
+ "glam 0.32.1",
 ]
 
 [[package]]
 name = "glamx"
 version = "0.1.3"
+source = "git+https://github.com/janhohenheim/glamx?branch=bevy-0.19#2773fc4992d5f0a617ccbf0ec017c3f70e465c4e"
 dependencies = [
  "approx",
- "glam",
+ "glam 0.32.1",
  "num-traits",
  "simba",
 ]
@@ -3140,7 +3153,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "177ea6330876de4ef08e184f827b98acc037614a4ce409902c5b0d53a9c2e951"
 dependencies = [
  "constgebra",
- "glam",
+ "glam 0.32.1",
  "tinyvec",
 ]
 
@@ -4265,9 +4278,11 @@ dependencies = [
 [[package]]
 name = "obvhs"
 version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f5a714277d5f74beb21a12cb8fb1d4774df5c637c2a0278ff3ebd812f42f7c1e"
 dependencies = [
  "bytemuck",
- "glam",
+ "glam 0.31.1",
  "half",
  "log",
  "rdst",
@@ -6811,7 +6826,3 @@ checksum = "27bc9d5b815bc103f142aa054f561d9187d191692ec7c2d1e2b4737f8dbd7296"
 dependencies = [
  "zune-core",
 ]
-
-[[patch.unused]]
-name = "avian3d"
-version = "0.7.0-dev"

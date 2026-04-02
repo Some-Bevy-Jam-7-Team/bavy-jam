@@ -56,12 +56,10 @@ lto = "thin"
 web = ["bevy/webgpu", "dep:wasm-bindgen"]
 
 [patch.crates-io]
-bevy_transform_interpolation = { path = "../bevy_transform_interpolation" }
-bevy_heavy = { path = "../bevy_heavy" }
-glamx = { path = "../glamx" }
-obvhs = { path = "../obvhs" }
-glam_matrix_extras = { path = "../glam_matrix_extras" }
-avian3d = { path = "../avian/crates/avian3d" }
+bevy_heavy = { git = "https://github.com/janhohenheim/bevy_heavy", branch = "bevy-0.19" }
+bevy_transform_interpolation = { git = "https://github.com/janhohenheim/bevy_transform_interpolation", branch = "bevy-0.19" }
+glamx = { git = "https://github.com/janhohenheim/glamx", branch = "bevy-0.19" }
+glam_matrix_extras = { git = "https://github.com/janhohenheim/glam_matrix_extras", branch = "bevy-0.19" }
 
 # Bevy
 bevy = { git = "https://github.com/bevyengine/bevy", rev = "d06aa47744dfa378f2e8a31cd7ff2d59c9afe4b9" }
