@@ -90,6 +90,7 @@ fn main() -> AppExit {
             ),
         )
         .add_observer(fix_point_lights)
+        .add_observer(fix_spot_lights)
         .add_observer(fix_directional_lights)
         .run()
 }
@@ -205,10 +206,35 @@ fn setup_loading_screen(mut commands: Commands) {
     ));
 }
 
-fn fix_point_lights(add: On<Add, PointLight>, mut lights: Query<&mut PointLight>) {
+fn fix_point_lights(
+    ready: On<LevelReady>,
+    mut commands: Commands,
+    lights: Query<&PointLight>,
+    transform_helper: TransformHelper,
+) {
+    let Ok(light) = lights.get(ready.entity) else {
+        return;
+    };
+    commands.entity(ready.entity).despawn();
+    commands.spawn((
+        PointLight {
+            shadow_maps_enabled: true,
+            contact_shadows_enabled: true,
+            ..*light
+        },
+        Transform::from(
+            transform_helper
+                .compute_global_transform(ready.entity)
+                .unwrap(),
+        ),
+    ));
+}
+
+fn fix_spot_lights(add: On<Add, SpotLight>, mut lights: Query<&mut SpotLight>) {
     let Ok(mut light) = lights.get_mut(add.entity) else {
         return;
     };
+    light.range = 100.0;
     light.shadow_maps_enabled = true;
 }
 
