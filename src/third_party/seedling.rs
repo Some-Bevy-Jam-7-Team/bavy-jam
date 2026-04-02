@@ -2,11 +2,21 @@ use bevy::prelude::*;
 use bevy_seedling::prelude::*;
 
 pub(super) fn plugin(app: &mut App) {
+    let graph_config = bevy_seedling::prelude::GraphConfiguration::Empty;
+
+    app.add_systems(Startup, graph);
+
+    #[cfg(feature = "web")]
     app.add_plugins(SeedlingPlugin {
-        graph_config: bevy_seedling::prelude::GraphConfiguration::Empty,
+        graph_config,
+        ..SeedlingPlugin::new_web_audio()
+    });
+
+    #[cfg(not(feature = "web"))]
+    app.add_plugins(SeedlingPlugin {
+        graph_config,
         ..Default::default()
-    })
-    .add_systems(Startup, graph);
+    });
 }
 
 fn graph(mut commands: Commands) {
@@ -22,6 +32,7 @@ fn graph(mut commands: Commands) {
 
     commands
         .spawn((MainBus, VolumeNode::default()))
+        .chain_node(LimiterNode::new(0.003, 0.15))
         .connect(AudioGraphOutput);
 
     // Pools
