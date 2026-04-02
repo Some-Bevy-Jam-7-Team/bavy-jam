@@ -123,54 +123,10 @@ jobs:
             echo "version=$(cargo pkgid | sed 's/.*#//')" >> "$GITHUB_OUTPUT"
           fi
 
-  bake-assets:
-    name: Bake Assets
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ env.toolchain }}
-
-      - name: Create tools directory
-        run: mkdir baking_tools
-
-      - name: Install kram
-        run: |
-          mkdir -p baking_tools/kram
-          cd baking_tools/kram
-          wget https://github.com/alecazam/kram/releases/download/v1.7.30/kram-linux.zip
-          unzip kram-linux.zip
-          chmod +x kram
-          cd ..
-          mv kram kram-linux
-          ln -s kram-linux/kram kram
-
-      - name: Install ImageMagick
-        uses: mfinelli/setup-imagemagick@v6
-
-      - name: Bake assets
-        run: |
-          PATH="$PATH:$PWD/baking_tools"
-          python3 scripts/bake_assets.py
-          rm -rf assets
-          mv assets_baked assets
-
-      - name: Upload assets
-        uses: actions/upload-artifact@v4
-        with:
-          name: assets
-          path: assets
-          retention-days: 1
-
   # Build and package a release for each platform.
   build:
     needs:
       - get-version
-      - bake-assets
       - forward-env
     env:
       version: ${{ needs.get-version.outputs.version }}
@@ -241,17 +197,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           lfs: ${{ env.git_lfs }}
-
-      - name: Remove unbaked assets
-        if: ${{ env.is_platform_enabled == 'true' }}
-        run: rm -rf assets
-
-      - name: Download assets
-        if: ${{ env.is_platform_enabled == 'true' }}
-        uses: actions/download-artifact@v4
-        with:
-          name: assets
-          path: assets
 
       - name: Install Rust toolchain
         if: ${{ env.is_platform_enabled == 'true' }}
