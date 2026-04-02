@@ -39,7 +39,7 @@ fn add_speed_boosts(
 ) {
     q.iter().for_each(|e| {
         cmd.entity(e)
-            .insert((SpeedBoost, CollisionEventsEnabled, Sensor))
+            .insert((SpeedBoostObserver, CollisionEventsEnabled, Sensor))
             .observe(boost_collision);
     });
 }
