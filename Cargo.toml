@@ -1,7 +1,6 @@
 [package]
 name = "bastard"
 version = "0.1.0"
-authors = ["testfoo"]
 edition = "2024"
 
 [dependencies]
@@ -9,6 +8,7 @@ avian3d = { git = "https://github.com/janhohenheim/avian", branch = "bevy-0.19" 
 bevy = { git = "https://github.com/bevyengine/bevy", rev = "d06aa47744dfa378f2e8a31cd7ff2d59c9afe4b9" }
 bevy_ahoy = { git = "https://github.com/janhohenheim/bevy_ahoy", branch = "bevy-0.19" }
 bevy_enhanced_input = { git = "https://github.com/janhohenheim/bevy_enhanced_input", branch = "bevy-0.19" }
+bevy_mod_mipmap_generator = { git = "https://github.com/dsgallups/bevy_mod_mipmap_generator.git", branch = "0.19" }
 bevy_skein = { git = "https://github.com/janhohenheim/skein", branch = "bevy-0.19" }
 wasm-bindgen = { version = "=0.2.108", optional = true }
 
