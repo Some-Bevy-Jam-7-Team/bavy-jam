@@ -4,46 +4,39 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-<<<<<<< HEAD
-
-bevy = { git = "https://github.com/bevyengine/bevy", rev = "d06aa47744dfa378f2e8a31cd7ff2d59c9afe4b9", default-features = false, features = [
-    # 2d
-    "2d_bevy_render",
-    "default_app",
-    "picking",
-    "scene",
-
-    # 3d
-    "3d_bevy_render",
-
-    # ui
-    "ui_api",
-    "ui_bevy_render",
-
-    # default_platform
-    "android-game-activity",
-    "bevy_gilrs",
-    "bevy_winit",
-    "default_font",
-    "multi_threaded",
-    "std",
-    "sysinfo_plugin",
-    "wayland",
-    "webgl2",
-    "x11",
-] }
-=======
->>>>>>> b4a53e0bca897df871413aea0c745b78899229a9
 avian3d = { git = "https://github.com/janhohenheim/avian", branch = "bevy-0.19" }
-bevy = { git = "https://github.com/bevyengine/bevy", rev = "d06aa47744dfa378f2e8a31cd7ff2d59c9afe4b9" }
+bevy = { git = "https://github.com/bevyengine/bevy", rev = "d06aa47744dfa378f2e8a31cd7ff2d59c9afe4b9", default-features = false, features = [
+  "default_app",
+  # 2d
+  "2d_bevy_render",
+  "picking",
+  "scene",
+
+  # 3d
+  "3d_bevy_render",
+
+  # ui
+  "ui_api",
+  "ui_bevy_render",
+
+  "default_font",
+  # default_platform
+  "android-game-activity",
+  "bevy_gilrs",
+  "bevy_winit",
+  "multi_threaded",
+  "std",
+  "sysinfo_plugin",
+  "wayland",
+  "webgl2",
+  "x11",
+] }
 bevy_ahoy = { git = "https://github.com/janhohenheim/bevy_ahoy", branch = "bevy-0.19" }
 bevy_enhanced_input = { git = "https://github.com/janhohenheim/bevy_enhanced_input", branch = "bevy-0.19" }
-<<<<<<< HEAD
-bevy_seedling = { git = "https://github.com/CorvusPrudens/bevy_seedling", branch = "bevy-0.19" }
-=======
 bevy_mod_mipmap_generator = { git = "https://github.com/dsgallups/bevy_mod_mipmap_generator.git", branch = "0.19" }
+bevy_seedling = { git = "https://github.com/CorvusPrudens/bevy_seedling", branch = "bevy-0.19" }
 bevy_skein = { git = "https://github.com/janhohenheim/skein", branch = "bevy-0.19" }
->>>>>>> b4a53e0bca897df871413aea0c745b78899229a9
+
 wasm-bindgen = { version = "=0.2.108", optional = true }
 
 # Set max log levels. This helps avoid unwanted low-severity log spam, which can affect performance.
@@ -123,10 +116,8 @@ bevy_ui = { git = "https://github.com/bevyengine/bevy", rev = "d06aa47744dfa378f
 bevy_ui_render = { git = "https://github.com/bevyengine/bevy", rev = "d06aa47744dfa378f2e8a31cd7ff2d59c9afe4b9" }
 bevy_utils = { git = "https://github.com/bevyengine/bevy", rev = "d06aa47744dfa378f2e8a31cd7ff2d59c9afe4b9" }
 bevy_window = { git = "https://github.com/bevyengine/bevy", rev = "d06aa47744dfa378f2e8a31cd7ff2d59c9afe4b9" }
-<<<<<<< HEAD
 firewheel = { git = "https://github.com/ChristopherBiscardi/Firewheel", branch = "chris-0.19" }
 firewheel-ircam-hrtf = { git = "https://github.com/ChristopherBiscardi/firewheel-ircam-hrtf", branch = "chris-0.19" }
-=======
 
 # Enable a small amount of optimization in the dev profile.
 [profile.dev]
@@ -147,4 +138,3 @@ lto = "thin"
 # Compile the entire crate as one unit.
 # Slows compile times, marginal improvements.
 codegen-units = 1
->>>>>>> b4a53e0bca897df871413aea0c745b78899229a9
