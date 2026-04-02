@@ -9,7 +9,7 @@ use bevy::{
 use bevy_ahoy::prelude::*;
 use bevy_enhanced_input::prelude::{Press, *};
 
-use crate::LevelReady;
+use crate::{LevelReady, PhysLayer};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_input_context::<PlayerInput>();
@@ -45,6 +45,10 @@ fn setup(
             Collider::cylinder(0.3, 1.8),
             // Configure inputs. The actions `Movement`, `Jump`, etc. are provided by Ahoy, you just need to bind them.
             PlayerInput,
+            CollisionLayers::new(
+                [PhysLayer::Default, PhysLayer::Player],
+                [PhysLayer::Default, PhysLayer::Goal],
+            ),
             actions!(PlayerInput[
                 (
                     Action::<Movement>::new(),

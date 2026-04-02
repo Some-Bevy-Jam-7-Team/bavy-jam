@@ -1,4 +1,9 @@
+use avian3d::prelude::{
+    ColliderConstructor, CollisionLayers, CollisionStart, PhysicsLayer, Sensor,
+};
 use bevy::asset::AssetMetaCheck;
+use bevy::color::palettes::css::BLACK;
+use bevy::color::palettes::tailwind::GREEN_700;
 use bevy::ecs::error::error;
 use bevy::gltf::convert_coordinates::GltfConvertCoordinates;
 use bevy::gltf::{GltfLoaderSettings, GltfPlugin};
@@ -80,7 +85,7 @@ fn main() -> AppExit {
             Update,
             (
                 set_in_game.run_if(assets_loaded).in_set(AppSet::Loading),
-                main_loop.in_set(AppSet::InGame),
+                (main_loop, setup_goals).in_set(AppSet::InGame),
             ),
         )
         .add_observer(fix_point_lights)
@@ -121,6 +126,57 @@ fn main_loop() {
 #[derive(Component)]
 #[require(Name::new("Landscape"))]
 pub struct Landscape;
+
+#[derive(Component)]
+#[require(Name::new("Goal"))]
+pub struct Goal;
+
+#[derive(PhysicsLayer, Default)]
+pub enum PhysLayer {
+    #[default]
+    Default,
+    Goal,
+    Player,
+}
+
+/// Epic bevy impl uses box shadow on a mesh
+fn setup_goals(mut commands: Commands, goals: Query<Entity, With<BoxShadow>>) {
+    for goal_entity in goals {
+        commands
+            .entity(goal_entity)
+            .remove::<MeshMaterial3d<StandardMaterial>>()
+            .insert((
+                Sensor,
+                ColliderConstructor::ConvexHullFromMesh,
+                Goal,
+                CollisionLayers::new(PhysLayer::Goal, PhysLayer::Player),
+            ))
+            .observe(on_goal_achieved);
+    }
+}
+
+fn on_goal_achieved(_on: On<CollisionStart>, mut commands: Commands) {
+    // win state :D
+    commands.spawn((
+        Node {
+            width: vw(100.0),
+            height: vh(100.0),
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
+            ..Node::default()
+        },
+        DespawnOnExit(AppState::InGame),
+        BackgroundColor(BLACK.with_alpha(0.2).into()),
+        children![(
+            Text::new("YOU FRE*AKING WIN!"),
+            TextFont {
+                font_size: 72.0f32.into(),
+                ..default()
+            },
+            TextColor(GREEN_700.into()),
+        )],
+    ));
+}
 
 fn spawn_landscape(mut cmd: Commands, assets: Res<AppAssets>) {
     cmd.spawn((Landscape, SceneRoot(assets.landscape.clone())))
