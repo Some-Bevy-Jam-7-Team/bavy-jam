@@ -86,9 +86,10 @@ fn main() -> AppExit {
             Update,
             (
                 set_in_game.run_if(assets_loaded).in_set(AppSet::Loading),
-                (main_loop, setup_goals).in_set(AppSet::InGame),
+                main_loop.in_set(AppSet::InGame),
             ),
         )
+        .add_observer(setup_goals)
         .add_observer(fix_point_lights)
         .add_observer(fix_spot_lights)
         .add_observer(fix_directional_lights)
@@ -138,7 +139,11 @@ pub enum PhysLayer {
 }
 
 /// Epic bevy impl uses box shadow on a mesh
-fn setup_goals(mut commands: Commands, goals: Query<Entity, With<BoxShadow>>) {
+fn setup_goals(
+    ready: On<LevelReady>,
+    mut commands: Commands,
+    goals: Query<Entity, With<BoxShadow>>,
+) {
     for goal_entity in goals {
         commands
             .entity(goal_entity)

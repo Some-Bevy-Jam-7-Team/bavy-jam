@@ -3,6 +3,7 @@ use bevy::prelude::*;
 mod ahoy;
 mod avian;
 mod input;
+mod mipmap;
 mod seedling;
 mod skein;
 
@@ -13,5 +14,6 @@ pub(super) fn plugin(app: &mut App) {
         ahoy::plugin,
         input::plugin,
         seedling::plugin,
+        mipmap::plugin,
     ));
 }
