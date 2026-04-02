@@ -1209,7 +1209,7 @@ checksum = "bff34eb29ff4b8a8688bc7299f14fb6b597461ca80fec03ed7d22939ab33e48f"
 [[package]]
 name = "bevy_mod_mipmap_generator"
 version = "0.1.0"
-source = "git+https://github.com/dsgallups/bevy_mod_mipmap_generator.git?branch=0.19#e2a2fe696e99bcb67cd7f9a354b6384610af5266"
+source = "git+https://github.com/dsgallups/bevy_mod_mipmap_generator.git?branch=0.19#6a1c662a8b0b4ca7328337a840b69466ace8e814"
 dependencies = [
  "anyhow",
  "bevy",
