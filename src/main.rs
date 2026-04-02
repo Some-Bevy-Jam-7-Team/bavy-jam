@@ -73,7 +73,6 @@ fn main() -> AppExit {
                 AppSet::InGame.run_if(in_state(AppState::InGame)),
             ),
         )
-        .add_systems(Startup, setup_directional_light)
         .add_systems(OnEnter(AppState::Setup), setup)
         .add_systems(OnEnter(AppState::Loading), (load, setup_loading_screen))
         .add_systems(OnEnter(AppState::InGame), spawn_landscape)
@@ -84,6 +83,8 @@ fn main() -> AppExit {
                 main_loop.in_set(AppSet::InGame),
             ),
         )
+        .add_observer(fix_point_lights)
+        .add_observer(fix_directional_lights)
         .run()
 }
 
@@ -151,17 +152,22 @@ fn setup_loading_screen(mut commands: Commands) {
     ));
 }
 
-fn setup_directional_light(mut cmd: Commands) {
-    cmd.spawn((
-        DirectionalLight {
-            shadow_maps_enabled: true,
-            contact_shadows_enabled: true,
-            illuminance: 2.,
-            color: Color::srgb(1.0, 0.98, 0.95),
-            ..default()
-        },
-        Transform::from_xyz(2., 2., 0.0).looking_at(Vec3::ZERO, Vec3::Y),
-    ));
+fn fix_point_lights(add: On<Add, PointLight>, mut lights: Query<&mut PointLight>) {
+    let Ok(mut light) = lights.get_mut(add.entity) else {
+        return;
+    };
+    light.shadow_maps_enabled = true;
+}
+
+fn fix_directional_lights(
+    add: On<Add, DirectionalLight>,
+    mut lights: Query<&mut DirectionalLight>,
+) {
+    let Ok(mut light) = lights.get_mut(add.entity) else {
+        return;
+    };
+    light.illuminance = 6_000.;
+    light.shadow_maps_enabled = true;
 }
 
 #[derive(Component, Default)]
