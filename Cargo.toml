@@ -33,12 +33,14 @@ bevy = { git = "https://github.com/bevyengine/bevy", rev = "d06aa47744dfa378f2e8
 ] }
 bevy_ahoy = { git = "https://github.com/janhohenheim/bevy_ahoy", branch = "bevy-0.19" }
 bevy_enhanced_input = { git = "https://github.com/janhohenheim/bevy_enhanced_input", branch = "bevy-0.19" }
+# bevy_mod_mipmap_generator = { path = "../bevy_mod_mipmap_generator" }
 bevy_mod_mipmap_generator = { git = "https://github.com/dsgallups/bevy_mod_mipmap_generator.git", branch = "0.19" }
 bevy_seedling = { git = "https://github.com/CorvusPrudens/bevy_seedling", branch = "bevy-0.19" }
 bevy_skein = { git = "https://github.com/janhohenheim/skein", branch = "bevy-0.19" }
 
 wasm-bindgen = { version = "=0.2.108", optional = true }
 
+image = "0.25.10"
 # Set max log levels. This helps avoid unwanted low-severity log spam, which can affect performance.
 log = { version = "0.4", features = [
   "max_level_debug",
