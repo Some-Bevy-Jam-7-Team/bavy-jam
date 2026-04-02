@@ -127,10 +127,6 @@ fn main_loop() {
 #[require(Name::new("Landscape"))]
 pub struct Landscape;
 
-#[derive(Component)]
-#[require(Name::new("Goal"))]
-pub struct Goal;
-
 #[derive(PhysicsLayer, Default)]
 pub enum PhysLayer {
     #[default]
@@ -148,7 +144,6 @@ fn setup_goals(mut commands: Commands, goals: Query<Entity, With<BoxShadow>>) {
             .insert((
                 Sensor,
                 ColliderConstructor::ConvexHullFromMesh,
-                Goal,
                 CollisionLayers::new(PhysLayer::Goal, PhysLayer::Player),
             ))
             .observe(on_goal_achieved);
