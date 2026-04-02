@@ -5,6 +5,7 @@ use bevy::core_pipeline::prepass::DeferredPrepass;
 use bevy::core_pipeline::tonemapping::Tonemapping;
 use bevy::gltf::GltfPlugin;
 use bevy::gltf::convert_coordinates::GltfConvertCoordinates;
+use bevy::image::{ImageAddressMode, ImageSamplerDescriptor};
 use bevy::input::mouse::AccumulatedMouseMotion;
 use bevy::light::atmosphere::ScatteringMedium;
 use bevy::light::{Atmosphere, AtmosphereEnvironmentMapLight, ShadowFilteringMethod};
@@ -220,7 +221,6 @@ fn setup_directional_light(mut cmd: Commands) {
             ..default()
         },
         Transform::from_xyz(2., 2., 0.0).looking_at(Vec3::ZERO, Vec3::Y),
-        ShadowFilteringMethod::Temporal,
     ));
 }
 
