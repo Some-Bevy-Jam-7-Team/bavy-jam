@@ -156,7 +156,7 @@ fn setup_directional_light(mut cmd: Commands) {
         DirectionalLight {
             shadow_maps_enabled: true,
             contact_shadows_enabled: true,
-            illuminance: 10_000.,
+            illuminance: 2.,
             color: Color::srgb(1.0, 0.98, 0.95),
             ..default()
         },
