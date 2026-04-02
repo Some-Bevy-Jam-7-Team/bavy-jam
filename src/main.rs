@@ -1,5 +1,6 @@
 use avian3d::prelude::{
-    ColliderConstructor, CollisionLayers, CollisionStart, PhysicsLayer, Sensor,
+    ColliderConstructor, CollisionEventsEnabled, CollisionLayers, CollisionStart, PhysicsLayer,
+    Sensor,
 };
 use bevy::asset::AssetMetaCheck;
 use bevy::color::palettes::css::BLACK;
@@ -145,6 +146,7 @@ fn setup_goals(mut commands: Commands, goals: Query<Entity, With<BoxShadow>>) {
                 Sensor,
                 ColliderConstructor::ConvexHullFromMesh,
                 CollisionLayers::new(PhysLayer::Goal, PhysLayer::Player),
+                CollisionEventsEnabled,
             ))
             .observe(on_goal_achieved);
     }
