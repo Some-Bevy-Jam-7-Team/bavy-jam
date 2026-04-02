@@ -77,7 +77,8 @@ fn setup(
         .insert((
             // Add the character controller configuration. We'll use the default settings for now.
             CharacterController {
-                speed: 16.0,
+                speed: 17.0,
+                air_acceleration_hz: 200.0,
                 friction_hz: 20.0,
                 ..default()
             },
@@ -155,6 +156,11 @@ fn setup(
                 ),
             ]),
         ))
+        .with_child(PointLight {
+            intensity: 100_000.0,
+            shadow_maps_enabled: true,
+            ..default()
+        })
         .id();
 
     // Spawn the player camera
@@ -165,7 +171,7 @@ fn setup(
         CharacterControllerCameraOf::new(player),
         Bloom::NATURAL,
         AtmosphereEnvironmentMapLight {
-            intensity: 0.4,
+            intensity: 0.6,
             ..default()
         },
         Atmosphere::earth(media.add(ScatteringMedium::default())),

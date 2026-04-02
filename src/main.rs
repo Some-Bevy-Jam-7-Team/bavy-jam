@@ -93,6 +93,7 @@ fn main() -> AppExit {
         .add_observer(fix_point_lights)
         .add_observer(fix_spot_lights)
         .add_observer(fix_directional_lights)
+        .insert_resource(GlobalAmbientLight::NONE)
         .run()
 }
 
