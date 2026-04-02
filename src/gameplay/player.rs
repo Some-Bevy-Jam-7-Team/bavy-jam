@@ -27,20 +27,19 @@ pub(super) fn plugin(app: &mut App) {
 
 #[derive(Component, Reflect, Debug)]
 #[reflect(Component)]
+#[require(Sensor, CollidingEntities::default())]
 pub struct SpeedBoost;
+
+#[derive(Component)]
+pub struct SpeedBoostObserver;
 
 fn add_speed_boosts(
     mut cmd: Commands,
-    q: Query<Entity, (With<RigidBody>, (Without<SpeedBoost>, Without<Player>))>,
+    q: Query<Entity, (With<SpeedBoost>, Without<SpeedBoostObserver>)>,
 ) {
     q.iter().for_each(|e| {
         cmd.entity(e)
-            .insert((
-                SpeedBoost,
-                CollisionEventsEnabled,
-                Sensor,
-                CollisionLayers::new(PhysLayer::Boost, PhysLayer::Player),
-            ))
+            .insert((SpeedBoost, CollisionEventsEnabled, Sensor))
             .observe(boost_collision);
     });
 }
@@ -54,7 +53,7 @@ fn boost_collision(
         return;
     };
 
-    // have to test this a bit and find a good middle ground
+    let boost_value = 1.2;
     boosted.0 *= Vec3::splat(boost_value);
 
     // mb some audio?
