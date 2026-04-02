@@ -1,5 +1,6 @@
 use avian3d::prelude::*;
 use bevy::{
+    camera::Exposure,
     input::common_conditions::input_just_pressed,
     light::{Atmosphere, AtmosphereEnvironmentMapLight, atmosphere::ScatteringMedium},
     post_process::bloom::Bloom,
@@ -72,7 +73,7 @@ fn setup(
         .entity(ready.entity)
         .insert((
             // Add the character controller configuration. We'll use the default settings for now.
-            CharacterController::default(),
+            CharacterController { ..default() },
             // The KCC currently behaves best when using a cylinder
             Collider::cylinder(0.3, 1.8),
             // Configure inputs. The actions `Movement`, `Jump`, etc. are provided by Ahoy, you just need to bind them.
@@ -152,6 +153,7 @@ fn setup(
     // Spawn the player camera
     commands.spawn((
         Camera3d::default(),
+        Exposure::INDOOR,
         // Enable the optional builtin camera controller
         CharacterControllerCameraOf::new(player),
         Bloom::NATURAL,

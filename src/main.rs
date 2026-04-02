@@ -140,7 +140,7 @@ pub enum PhysLayer {
 
 /// Epic bevy impl uses box shadow on a mesh
 fn setup_goals(
-    ready: On<LevelReady>,
+    _ready: On<LevelReady>,
     mut commands: Commands,
     goals: Query<Entity, With<BoxShadow>>,
 ) {
@@ -250,7 +250,7 @@ fn fix_directional_lights(
     let Ok(mut light) = lights.get_mut(add.entity) else {
         return;
     };
-    light.illuminance = 6_000.;
+    light.illuminance = 2_000.;
     light.shadow_maps_enabled = true;
 }
 
