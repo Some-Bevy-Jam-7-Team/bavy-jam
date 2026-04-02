@@ -17,7 +17,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(setup).add_systems(
         Update,
         (
-            add_observers,
+            add_speed_boosts,
             capture_cursor.run_if(input_just_pressed(MouseButton::Left)),
             release_cursor.run_if(input_just_pressed(KeyCode::Escape)),
         ),
@@ -28,28 +28,29 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Component)]
 pub struct SpeedBoost(pub f32);
 
-#[derive(Component)]
-pub struct SpeedBoostObserver;
-
-fn add_observers(
+fn add_speed_boosts(
     mut cmd: Commands,
-    q: Query<Entity, (With<SpeedBoost>, Without<SpeedBoostObserver>)>,
+    q: Query<Entity, (With<SpeculativeMargin>, Without<SpeedBoost>)>,
 ) {
     q.iter().for_each(|e| {
         cmd.entity(e)
-            .insert(SpeedBoostObserver)
+            .insert(SpeedBoost(1.))
             .observe(boost_collision);
     });
 }
 
-fn boost_collision(trigger: On<CollisionEnd>, mut q_boosted: Query<&mut LinearVelocity>) {
+fn boost_collision(
+    trigger: On<CollisionEnd>,
+    mut q_player: Query<&mut LinearVelocity, With<Player>>,
+) {
     let other_entity = trigger.event().body2;
-    let Some(mut boosted) = other_entity.and_then(|e| q_boosted.get_mut(e).ok()) else {
+    let Some(mut boosted) = other_entity.and_then(|e| q_player.get_mut(e).ok()) else {
         return;
     };
 
+    // have to test this a bit and find a good middle ground
     let boost_value = 1.5;
-    boosted.0 *= Vec3::splat(boost_value).with_y(1.);
+    boosted.0 *= Vec3::splat(boost_value);
 
     // mb some audio?
 }
